@@ -1,5 +1,9 @@
 import Settings from './Settings'
+import Profiles from './Profiles'
+import ProfileNew from './ProfileNew'
 
 export {
-	Settings
+	ProfileNew,
+	Profiles,
+	Settings,
 }

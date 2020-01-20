@@ -7,17 +7,13 @@ import {connect} from "react-redux";
 import './App.css';
 import {
     PREFIX_UPDATE_LOCATION as UPDATE_LOCATION,
+    PREFIX_SETTINGS,
 } from "./const/prefix";
-import {
-    PATH_INDEX,
-    PATH_SETTINGS,
-    PATH_DUMP_CREATE,
-    PATH_DUMPS,
-} from "./const/path";
 
 import {
-    PREFIX_SETTINGS
-} from "./const/prefix";
+    PATH_INDEX, PATH_PROFILE, PATH_PROFILE_NEW,
+    PATH_SETTINGS,
+} from "./const/path";
 
 import {classes} from './const/styles'
 import MainMenu from './componets/Layout/MainMenu'
@@ -29,6 +25,8 @@ import {send} from './tools/reqAstra'
 import {alertOkEvent} from "./const/alert";
 import {
     Settings,
+    Profiles,
+    ProfileNew,
 } from './pages'
 
 class App extends Component {
@@ -52,9 +50,8 @@ class App extends Component {
     try {
         await this.waitAstilectronReady();
         const response = await send('/app/init');
-        // TODO: clear
-        console.log('response ', response);
-        // store.dispatch({type : `${PREFIX_SETTINGS}_SET_APP_CONFIG`, data : response.data});
+
+        store.dispatch({type : `${PREFIX_SETTINGS}_SET_APP_CONFIG`, data : response.data});
 
     } catch (e) {
         const mess = e.message || e;
@@ -89,6 +86,8 @@ class App extends Component {
                 <Switch>
                     <Route path={PATH_INDEX} exact component={Settings}/>
                     <Route path={PATH_SETTINGS}    component={Settings}/>
+                    <Route path={PATH_PROFILE}     component={Profiles}/>
+                    <Route path={PATH_PROFILE_NEW} component={ProfileNew}/>
                     <Route path="*"                component={Settings} />
                 </Switch>
                 <Alert/>

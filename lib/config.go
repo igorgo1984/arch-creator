@@ -1,25 +1,49 @@
 package lib
 
 import (
+	"encoding/json"
+	"fmt"
 	u "github.com/eagle7410/go_util/libs"
-	"go.mongodb.org/mongo-driver/bson"
 	"io/ioutil"
 	"net/http"
 	"os"
 	"reflect"
+	"strings"
 )
 
 type (
 	config struct {
-		IsHasCredentials bool     `json:"isHasCredentials" bson:"isHasCredentials" `
-		Files            []string `json:"files" bson:"files" `
+		OwnCloudUri        string    `json:"ownCloudUri"`
+		OwnCloudPassword   string    `json:"ownCloudPassword"`
+		OwnCloudLogin      string    `json:"ownCloudLogin"`
+		DefaultSaveArchDir string    `json:"defaultSaveArchDir"`
+		Profiles           []Profile `json:"profiles"`
 	}
 )
 
 var Config = config{}
 
+func toCompareName (s *string) string {
+	return strings.ToLower(strings.Trim(*s, " "))
+}
+
+func (i *config) AddProfile(p *Profile) (err error) {
+
+	compareName := toCompareName(&p.Name)
+
+	for inx, _ := range i.Profiles {
+		if toCompareName(&i.Profiles[inx].Name) == compareName {
+			return fmt.Errorf("%v already exist", compareName)
+		}
+	}
+
+	i.Profiles = append(i.Profiles, *p);
+
+	return nil
+}
+
 func (i *config) Save() (err error) {
-	arrByte, err := bson.Marshal(i)
+	arrByte, err := json.MarshalIndent(i, "", "\t")
 
 	if err != nil {
 		return err
@@ -38,7 +62,7 @@ func (i *config) Load() (err error) {
 			return err
 		}
 
-		if err = bson.Unmarshal(arrByte, i); err != nil {
+		if err = json.Unmarshal(arrByte, i); err != nil {
 			return err
 		}
 	}
@@ -70,16 +94,22 @@ func appConfigSet(data interface{}) (response interface{}) {
 			}
 		}
 	}()
-	//pd := u.PanicData{}
+	pd := u.PanicData{}
 
-	//payload := data.(map[string]interface{})
-	//
-	//pd.CheckAndPanicTechProblem(err != nil, "Error write config file %v", err)
+	payload := data.(map[string]interface{})
+
+	Config.OwnCloudUri = payload["OwnCloudUri"].(string)
+	Config.OwnCloudPassword = payload["OwnCloudPassword"].(string)
+	Config.OwnCloudLogin = payload["OwnCloudLogin"].(string)
+	Config.DefaultSaveArchDir = payload["defaultSaveArchDir"].(string)
+
+	err := Config.Save()
+	pd.CheckAndPanicTechProblem(err != nil, "Error write config file %v", err)
 
 	back := SendBack{
 		Code: http.StatusOK,
 		Type: SendBackTypeMessage,
-		Data: "dummy",
+		Data: "ok",
 	}
 
 	return back

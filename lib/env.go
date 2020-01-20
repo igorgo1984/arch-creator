@@ -77,10 +77,10 @@ func (i *env) initPaths() (err error) {
 		i.PathPublic = path.Join(i.WorkDir, "pub")
 	}
 
-	i.PathFavPng    = path.Join(i.PathPublic,  "fav.png")
-	i.PathFavIcns   = path.Join(i.PathPublic,  "fav.icns")
-	i.PathIndex     = path.Join(i.PathPublic,  "index.html")
-	i.PathAppConfig = path.Join(i.PathRuntime, "app.txt")
+	i.PathFavPng = path.Join(i.PathPublic, "fav.png")
+	i.PathFavIcns = path.Join(i.PathPublic, "fav.icns")
+	i.PathIndex = path.Join(i.PathPublic, "index.html")
+	i.PathAppConfig = path.Join(i.PathRuntime, "app.json")
 
 	if err = u.MustDir(i.PathRuntime, os.ModePerm); err != nil {
 		return err

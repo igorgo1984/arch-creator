@@ -7,7 +7,10 @@ import {
 	FormControl,
 	Input,
 	Typography,
-	IconButton
+	IconButton,
+	ExpansionPanel,
+	ExpansionPanelSummary,
+	ExpansionPanelDetails,
 } from '@material-ui/core';
 
 import IconPath from '@material-ui/icons/GetApp';
@@ -15,6 +18,7 @@ import IconShow from '@material-ui/icons/Visibility';
 import IconHide from '@material-ui/icons/VisibilityOff';
 import IconCloudQueue from '@material-ui/icons/CloudQueue';
 import IconPerson from '@material-ui/icons/Person';
+import IconExpandMore from '@material-ui/icons/ExpandMore';
 
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
@@ -28,11 +32,21 @@ import {
 } from '../../tools/messageBox'
 
 import {alertBadEvent} from "../../const/alert";
+import {
+	BG_COLOR_BLUE,
+	COLOR_WHITE,
+} from '../../const/colors'
 
 const useStyles = makeStyles(theme => ({
+	w100 : {
+		width : '100%'
+	},
 	root: {
 		display: 'flex',
 		flexWrap: 'wrap',
+	},
+	marginRight: {
+		marginRight: theme.spacing(1),
 	},
 	margin: {
 		margin: theme.spacing(1),
@@ -40,8 +54,9 @@ const useStyles = makeStyles(theme => ({
 	withoutLabel: {
 		marginTop: theme.spacing(3),
 	},
-	textField: {
-		width: '100%',
+	headingPanel : {
+		backgroundColor: BG_COLOR_BLUE,
+		color: COLOR_WHITE
 	},
 }));
 
@@ -83,7 +98,72 @@ const Form = (state) => {
 
 	return (
 		<div className={classes.root}>
-			<FormControl fullWidth className={clsx(classes.margin, classes.textField)}>
+			<ExpansionPanel className={classes.w100} >
+				<ExpansionPanelSummary
+					className={classes.headingPanel}
+					expandIcon={<IconExpandMore />}
+					aria-controls="panel1a-content"
+					id="panel1a-header"
+				>
+					<IconCloudQueue className={clsx(classes.marginRight)}/>
+					<Typography className={classes.heading}>Own cloud section</Typography>
+				</ExpansionPanelSummary>
+				<ExpansionPanelDetails>
+					<div className={clsx(classes.w100)}>
+						<FormControl fullWidth className={clsx(classes.margin, classes.w100)}>
+							<InputLabel htmlFor="OwnCloudUri">Own cloud uri</InputLabel>
+							<Input
+								id="OwnCloudUri"
+								value={OwnCloudUri}
+								startAdornment={
+									<InputAdornment position="start">
+										<IconCloudQueue/>
+									</InputAdornment>
+								}
+								onChange={
+									(ev) => handlerChangeField('OwnCloudUri', ev.target.value)}
+							/>
+						</FormControl>
+						<FormControl fullWidth className={clsx(classes.margin, classes.w100)}>
+							<InputLabel htmlFor="OwnCloudLogin">Own cloud login</InputLabel>
+							<Input
+								id="OwnCloudLogin"
+								value={OwnCloudLogin}
+								startAdornment={
+									<InputAdornment position="start">
+										<IconPerson/>
+									</InputAdornment>
+								}
+								onChange={(ev) => handlerChangeField('OwnCloudLogin', ev.target.value)}
+							/>
+						</FormControl>
+						<FormControl fullWidth className={clsx(classes.margin, classes.w100)}>
+							<InputLabel htmlFor="OwnCloudPassword">Own cloud password</InputLabel>
+							<Input
+								id="OwnCloudPassword"
+								type={OwnCloudIsShowPassword ? 'text' : 'password'}
+								value={OwnCloudPassword}
+								onChange={(ev) => handlerChangeField('OwnCloudPassword', ev.target.value)}
+								startAdornment={
+									<InputAdornment position="start">
+										<IconButton
+											aria-label="toggle password visibility"
+											onClick={ () => changeField({
+												field :'OwnCloudIsShowPassword',
+												value : !OwnCloudIsShowPassword
+											}) }
+										>
+											{ OwnCloudIsShowPassword ? <IconHide /> : <IconShow /> }
+										</IconButton>
+									</InputAdornment>
+								}
+							/>
+						</FormControl>
+					</div>
+
+				</ExpansionPanelDetails>
+			</ExpansionPanel>
+			<FormControl fullWidth className={clsx(classes.margin, classes.w100)}>
 				<InputLabel htmlFor="standard-adornment-password">Default archive dir save</InputLabel>
 				<Input
 					id="standard-adornment-password"
@@ -96,56 +176,6 @@ const Form = (state) => {
 								onClick={() => handlerChangeDefaultSaveDir()}
 							>
 								<IconPath/>
-							</IconButton>
-						</InputAdornment>
-					}
-				/>
-			</FormControl>
-			<Typography component="div">Own cloud section</Typography>
-			<FormControl fullWidth className={clsx(classes.margin, classes.textField)}>
-				<InputLabel htmlFor="OwnCloudUri">Own cloud uri</InputLabel>
-				<Input
-					id="OwnCloudUri"
-					value={OwnCloudUri}
-					startAdornment={
-						<InputAdornment position="start">
-							<IconCloudQueue/>
-						</InputAdornment>
-					}
-					onChange={
-						(ev) => handlerChangeField('OwnCloudUri', ev.target.value)}
-				/>
-			</FormControl>
-			<FormControl fullWidth className={clsx(classes.margin, classes.textField)}>
-				<InputLabel htmlFor="OwnCloudLogin">Own cloud login</InputLabel>
-				<Input
-					id="OwnCloudLogin"
-					value={OwnCloudLogin}
-					startAdornment={
-						<InputAdornment position="start">
-							<IconPerson/>
-						</InputAdornment>
-					}
-					onChange={(ev) => handlerChangeField('OwnCloudLogin', ev.target.value)}
-				/>
-			</FormControl>
-			<FormControl fullWidth className={clsx(classes.margin, classes.textField)}>
-				<InputLabel htmlFor="OwnCloudPassword">Own cloud password</InputLabel>
-				<Input
-					id="OwnCloudPassword"
-					type={OwnCloudIsShowPassword ? 'text' : 'password'}
-					value={OwnCloudPassword}
-					onChange={(ev) => handlerChangeField('OwnCloudPassword', ev.target.value)}
-					startAdornment={
-						<InputAdornment position="start">
-							<IconButton
-								aria-label="toggle password visibility"
-								onClick={ () => changeField({
-									field :'OwnCloudIsShowPassword',
-									value : !OwnCloudIsShowPassword
-								}) }
-							>
-								{ OwnCloudIsShowPassword ? <IconHide /> : <IconShow /> }
 							</IconButton>
 						</InputAdornment>
 					}
