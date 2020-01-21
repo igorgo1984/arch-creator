@@ -10,6 +10,7 @@ import (
 	"github.com/pkg/errors"
 	"io/ioutil"
 	"log"
+	"os"
 	"os/user"
 	"path"
 	"runtime"
@@ -22,15 +23,22 @@ func init() {
 		log.Fatalf("Err init env %v", err)
 	}
 
-	if err := lib.Config.Load(); err != nil {
-		log.Fatalf("Err init App config %v", err)
-	}
-	if err := lib.Config.Load(); err != nil {
-		log.Fatalf("Err init App config %v", err)
+	if !lib.Config.IsHasFile() {
+		if err := lib.Config.Save(); err != nil {
+			log.Fatalf("Err init create first config %v", err)
+		}
+
+		os.Exit(0)
 	}
 
-	if err := ownCloud.Client.Init(&lib.Config); err != nil {
-		log.Fatalf("Err OwnCloud Client Init %v", err)
+	if err := lib.Config.Load(); err != nil {
+		log.Fatalf("Err init create first config %v", err)
+	}
+
+	if len(lib.Config.OwnCloudUri) > 0 {
+		if err := ownCloud.Client.Init(&lib.Config); err != nil {
+			log.Fatalf("Err OwnCloud Client Init %v", err)
+		}
 	}
 
 	flag.StringVar(&command, "c", "", "Extends command")

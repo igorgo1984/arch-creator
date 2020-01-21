@@ -109,8 +109,12 @@ func (i *config) Save() (err error) {
 	return err
 }
 
+func (i *config) IsHasFile ()(isHas bool) {
+	return u.FileExists(Env.PathAppConfig)
+}
+
 func (i *config) Load() (err error) {
-	if u.FileExists(Env.PathAppConfig) {
+	if i.IsHasFile() {
 		arrByte, err := ioutil.ReadFile(Env.PathAppConfig)
 
 		if err != nil {
