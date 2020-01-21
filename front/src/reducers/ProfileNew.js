@@ -2,7 +2,8 @@ import {
 	PREFIX_NEW_PROFILE as PREFIX
 } from '../const/prefix'
 const initialState = {
-	name : '',
+	isNew : true,
+	name  : '',
 	files : [],
 	dirSave : '',
 	isUploadToOwnCloud : false,
@@ -12,16 +13,26 @@ const initialState = {
 const ProfileNew = (state = initialState, action) => {
 
 	switch (action.type) {
+		// Setup new profile
+		case `${PREFIX}_EDIT`:
+			return {
+				...initialState,
+				...action.data,
+				isNew   : false,
+			};
+		// Setup new profile
+		case `${PREFIX}_DEFAULT_DIR_SAVE`:
+			return {
+				...initialState,
+				dirSave : action.data,
+				isNew   : true,
+			};
 		case `${PREFIX}_SET_ERRORS`:
 			return {
 				...state,
 				errorMessages : action.data
 			};
-		case `${PREFIX}_DEFAULT_DIR_SAVE`:
-			return {
-				...initialState,
-				dirSave : action.data
-			};
+
 		case `${PREFIX}_MOVE_FILE_FROM_LIST`:
 			return {
 				...state,

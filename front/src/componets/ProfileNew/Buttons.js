@@ -9,14 +9,15 @@ import IconSave   from '@material-ui/icons/Save';
 import IconCancel from '@material-ui/icons/Cancel';
 
 import {
-	PREFIX_NEW_PROFILE as PREFIX
+	PREFIX_NEW_PROFILE as PREFIX,
+	PREFIX_SETTINGS as SETTINGS
 } from '../../const/prefix'
 
 import {
 	PATH_PROFILE
 } from '../../const/path'
 
-import { alertBadEvent, alertOkEvent } from '../../const/alert'
+import { alertBadEvent } from '../../const/alert'
 import {send} from "../../tools/reqAstra";
 
 const useStyles = makeStyles(theme => ({
@@ -32,10 +33,11 @@ const Buttons = (state) => {
 		//Stores
 		store, settings,
 		// Dispatches
-		setErrors, alert} = state;
+		updateProfile, newProfile, setErrors, alert} = state;
 	const { profiles } = settings;
 
 	const {
+		isNew,
 		name,
 		files,
 		dirSave,
@@ -50,13 +52,15 @@ const Buttons = (state) => {
 		setErrors(errors);
 
 		try {
-			if (!name.length) errors.push('Name is required');
+			if (isNew) {
+				if (!name.length) errors.push('Name is required');
 
-			const hasProfile = profiles.find(
-				p => p.name.trim().toLocaleLowerCase() === name.trim().toLocaleLowerCase()
-			);
+				const hasProfile = profiles.find(
+					p => p.name.trim().toLocaleLowerCase() === name.trim().toLocaleLowerCase()
+				);
 
-			if (hasProfile !== undefined) errors.push(`Profile with name ${name} already exists`);
+				if (hasProfile !== undefined) errors.push(`Profile with name ${name} already exists`);
+			}
 
 			if (!files.length) errors.push('No files for create archive');
 
@@ -67,15 +71,22 @@ const Buttons = (state) => {
 				return false
 			}
 
-			const response = await send('/new/profile', {
+			const sendData = {
 				name,
 				files,
 				dirSave,
 				isUploadToOwnCloud
-			});
+			};
 
-			// TODO: clear NEED DOIT
-			console.log('response ', response);
+			if (isNew) {
+				await send('/new/profile', sendData);
+				newProfile({ ...sendData, isActive : false });
+			} else {
+				await send('/edit/profile', sendData);
+				updateProfile(sendData);
+			}
+
+			await history.push(PATH_PROFILE);
 
 		} catch (e) {
 			alert( alertBadEvent(e.message || e) )
@@ -103,6 +114,8 @@ export default connect(
 	}),
 	dispatch => ({
 		alert : (data) => dispatch(data),
-		setErrors : (data) => dispatch({type: `${PREFIX}_SET_ERRORS`, data})
+		updateProfile : (data) => dispatch({type: `${SETTINGS}_EDIT_PROFILE`, data}),
+		newProfile : (data) => dispatch({type: `${SETTINGS}_NEW_PROFILE`, data}),
+		setErrors : (data) => dispatch({type: `${PREFIX}_SET_ERRORS`, data}),
 	})
 )(Buttons);

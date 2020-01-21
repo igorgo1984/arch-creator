@@ -4,7 +4,6 @@ import (
 	"errors"
 	u "github.com/eagle7410/go_util/libs"
 	"net/http"
-	"reflect"
 )
 
 type Profile struct {
@@ -13,6 +12,10 @@ type Profile struct {
 	DirSave            string   `json:"dirSave"`
 	IsUploadToOwnCloud bool     `json:"isUploadToOwnCloud"`
 	IsActive           bool     `json:"isActive"`
+}
+
+func (i *Profile) IsNone() bool {
+	return len(i.Name) == 0
 }
 
 func (i *Profile) GetErrorValidation() error {
@@ -35,33 +38,60 @@ func (i *Profile) GetErrorValidation() error {
 	return nil
 }
 
-func profileNew (data interface{}) (response interface{}) {
+func profileChangeActive(data interface{}) (response interface{}) {
 	defer func() {
 		if d := recover(); d != nil {
-			switch reflect.TypeOf(d).String() {
-			case "string":
-				response = SendBack{
-					Type: SendBackTypeMessage,
-					Code: http.StatusBadRequest,
-					Data: d.(string),
-				}
-			case "*lib.PanicData":
-				data := d.(*u.PanicData)
+			response = handlerPanic(d)
+		}
+	}()
 
-				response = SendBack{
-					Type: SendBackTypeMessage,
-					Code: data.Type,
-					Data: data.Mess,
-				}
-			default:
-				e := d.(error)
+	pd := u.PanicData{}
+	payload := data.(map[string]interface{})
 
-				response = SendBack{
-					Type: SendBackTypeMessage,
-					Code: http.StatusBadRequest,
-					Data: e.Error(),
-				}
-			}
+	name := payload["name"].(string)
+	isActive := payload["isActive"].(bool)
+
+	err := Config.ChangeActiveProfile(&name, isActive).Save()
+
+	pd.CheckAndPanicTechProblem(err != nil, "Error update config: %v", err)
+
+	back := SendBack{
+		Code: http.StatusOK,
+		Type: SendBackTypeMessage,
+		Data: "ok",
+	}
+
+	return back
+}
+
+func profileMove(data interface{}) (response interface{}) {
+	defer func() {
+		if d := recover(); d != nil {
+			response = handlerPanic(d)
+		}
+	}()
+
+	pd := u.PanicData{}
+	payload := data.(map[string]interface{})
+
+	name := payload["name"].(string)
+
+	err := Config.MoveProfile(&name).Save()
+	pd.CheckAndPanicTechProblem(err != nil, "Error update config: %v", err)
+
+	back := SendBack{
+		Code: http.StatusOK,
+		Type: SendBackTypeMessage,
+		Data: "ok",
+	}
+
+	return back
+}
+
+func profileEdit(data interface{}) (response interface{}) {
+	defer func() {
+		if d := recover(); d != nil {
+			response = handlerPanic(d)
 		}
 	}()
 
@@ -69,11 +99,45 @@ func profileNew (data interface{}) (response interface{}) {
 	payload := data.(map[string]interface{})
 
 	profile := Profile{}
-
-	profile.Name               = payload["name"].(string)
-	profile.DirSave            = payload["dirSave"].(string)
+	profile.Name = payload["name"].(string)
+	profile.DirSave = payload["dirSave"].(string)
 	profile.IsUploadToOwnCloud = payload["isUploadToOwnCloud"].(bool)
 
+	for _, file := range payload["files"].([]interface{}) {
+		profile.Files = append(profile.Files, file.(string))
+	}
+
+	err := profile.GetErrorValidation()
+
+	pd.CheckAndPanicBadReq(err != nil, "%v", err)
+
+	err = Config.UpdateProfile(&profile).Save()
+
+	pd.CheckAndPanicBadReq(err != nil, "Error save %v", err)
+
+	back := SendBack{
+		Code: http.StatusOK,
+		Type: SendBackTypeMessage,
+		Data: "ok",
+	}
+
+	return back
+}
+
+func profileNew(data interface{}) (response interface{}) {
+	defer func() {
+		if d := recover(); d != nil {
+			response = handlerPanic(d)
+		}
+	}()
+
+	pd := u.PanicData{}
+	payload := data.(map[string]interface{})
+
+	profile := Profile{}
+	profile.Name = payload["name"].(string)
+	profile.DirSave = payload["dirSave"].(string)
+	profile.IsUploadToOwnCloud = payload["isUploadToOwnCloud"].(bool)
 
 	for _, file := range payload["files"].([]interface{}) {
 		profile.Files = append(profile.Files, file.(string))

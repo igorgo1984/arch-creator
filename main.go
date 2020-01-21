@@ -2,6 +2,7 @@ package main
 
 import (
 	"arch-creator/lib"
+	"arch-creator/lib/ownCloud"
 	"flag"
 	astiptr "github.com/asticode/go-astitools/ptr"
 	u "github.com/eagle7410/go_util/libs"
@@ -24,6 +25,14 @@ func init() {
 	if err := lib.Config.Load(); err != nil {
 		log.Fatalf("Err init App config %v", err)
 	}
+	if err := lib.Config.Load(); err != nil {
+		log.Fatalf("Err init App config %v", err)
+	}
+
+	if err := ownCloud.Client.Init(&lib.Config); err != nil {
+		log.Fatalf("Err OwnCloud Client Init %v", err)
+	}
+
 	flag.StringVar(&command, "c", "", "Extends command")
 	log.Printf("Init is OK \n")
 }

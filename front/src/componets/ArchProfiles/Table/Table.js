@@ -34,7 +34,7 @@ const EnhancedTable = state => {
 							stableSort(profiles, getSorting(order, orderBy))
 							.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
 							.filter(row => ( row.name ).includes(search))
-							.map(n => <RowShow row={n} key={'RowS' + n.id} />)
+							.map(n => <RowShow row={n} key={'RowS_' + n.name} />)
 						}
 						{emptyRows > 0 && (
 							<TableRow style={{ height: rowsPerPage * emptyRows }}>

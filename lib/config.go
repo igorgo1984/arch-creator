@@ -7,7 +7,6 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
-	"reflect"
 	"strings"
 )
 
@@ -23,8 +22,64 @@ type (
 
 var Config = config{}
 
-func toCompareName (s *string) string {
+func toCompareName(s *string) string {
 	return strings.ToLower(strings.Trim(*s, " "))
+}
+
+func (i *config) ProfileByName(name *string) (profile Profile) {
+	compareName := toCompareName(name)
+
+	for inx, _ := range i.Profiles {
+		if !i.Profiles[inx].IsActive {
+			continue
+		}
+
+		if toCompareName(&i.Profiles[inx].Name) == compareName {
+			return i.Profiles[inx]
+		}
+	}
+
+	return profile
+}
+
+func (i *config) ChangeActiveProfile(name *string, isActive bool) *config {
+	compareName := toCompareName(name)
+
+	for inx, _ := range i.Profiles {
+		if toCompareName(&i.Profiles[inx].Name) == compareName {
+			i.Profiles[inx].IsActive = isActive
+			return i
+		}
+	}
+
+	return i
+}
+
+func (i *config) MoveProfile(name *string) *config {
+	compareName := toCompareName(name)
+
+	for inx, _ := range i.Profiles {
+		if toCompareName(&i.Profiles[inx].Name) == compareName {
+			i.Profiles = append(i.Profiles[:inx], i.Profiles[inx+1:]...)
+			return i
+		}
+	}
+
+	return i
+}
+
+func (i *config) UpdateProfile(p *Profile) *config {
+	compareName := toCompareName(&p.Name)
+
+	for inx, _ := range i.Profiles {
+		if toCompareName(&i.Profiles[inx].Name) == compareName {
+			i.Profiles[inx].DirSave = p.DirSave
+			i.Profiles[inx].Files = p.Files
+			i.Profiles[inx].IsUploadToOwnCloud = p.IsUploadToOwnCloud
+		}
+	}
+
+	return i
 }
 
 func (i *config) AddProfile(p *Profile) (err error) {
@@ -37,7 +92,7 @@ func (i *config) AddProfile(p *Profile) (err error) {
 		}
 	}
 
-	i.Profiles = append(i.Profiles, *p);
+	i.Profiles = append(i.Profiles, *p)
 
 	return nil
 }
@@ -73,25 +128,7 @@ func (i *config) Load() (err error) {
 func appConfigSet(data interface{}) (response interface{}) {
 	defer func() {
 		if d := recover(); d != nil {
-
-			switch reflect.TypeOf(d).String() {
-			case "*lib.PanicData":
-				data := d.(*u.PanicData)
-
-				response = SendBack{
-					Type: SendBackTypeMessage,
-					Code: data.Type,
-					Data: data.Mess,
-				}
-			default:
-				e := d.(error)
-
-				response = SendBack{
-					Type: SendBackTypeMessage,
-					Code: http.StatusBadRequest,
-					Data: e.Error(),
-				}
-			}
+			response = handlerPanic(d)
 		}
 	}()
 	pd := u.PanicData{}

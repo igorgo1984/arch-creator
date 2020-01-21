@@ -11,22 +11,24 @@ import {
 } from "./const/prefix";
 
 import {
-    PATH_INDEX, PATH_PROFILE, PATH_PROFILE_NEW,
-    PATH_SETTINGS,
+    PATH_INDEX, PATH_PROFILE, PATH_PROFILE_NEW, PATH_PROFILE_EDIT,
+    PATH_SETTINGS, PATH_ARCH_NEW,
 } from "./const/path";
 
-import {classes} from './const/styles'
-import MainMenu from './componets/Layout/MainMenu'
-import Header from './componets/Layout/Header'
-import Alert from "./componets/Alert";
-import {store} from './configureStore';
-import LoadAnimation from './componets/LoadAnimation'
-import {send} from './tools/reqAstra'
+import {classes}      from './const/styles'
+import MainMenu       from './componets/Layout/MainMenu'
+import Header         from './componets/Layout/Header'
+import Alert          from "./componets/Alert";
+import {store}        from './configureStore';
+import LoadAnimation  from './componets/LoadAnimation'
+import {send}         from './tools/reqAstra'
 import {alertOkEvent} from "./const/alert";
 import {
     Settings,
     Profiles,
     ProfileNew,
+    ProfileEdit,
+    ArchiveCreate,
 } from './pages'
 
 class App extends Component {
@@ -84,11 +86,13 @@ class App extends Component {
             <main className={classes.content}>
                 <div className={classes.toolbar} />
                 <Switch>
-                    <Route path={PATH_INDEX} exact component={Settings}/>
-                    <Route path={PATH_SETTINGS}    component={Settings}/>
-                    <Route path={PATH_PROFILE}     component={Profiles}/>
-                    <Route path={PATH_PROFILE_NEW} component={ProfileNew}/>
-                    <Route path="*"                component={Settings} />
+                    <Route path={PATH_INDEX} exact  component={Settings}/>
+                    <Route path={PATH_SETTINGS}     component={Settings}/>
+                    <Route path={PATH_PROFILE}      component={Profiles}/>
+                    <Route path={PATH_PROFILE_NEW}  component={ProfileNew}/>
+                    <Route path={PATH_PROFILE_EDIT} component={ProfileEdit}/>
+                    <Route path={PATH_ARCH_NEW}     component={ArchiveCreate}/>
+                    <Route path="*"                 component={Settings} />
                 </Switch>
                 <Alert/>
             </main>

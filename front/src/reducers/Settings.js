@@ -28,6 +28,40 @@ const initialState = {
 
 const Settings = (state = initialState, action) => {
 	switch (action.type) {
+		case `${PREFIX}_EDIT_PROFILE`:
+			return {
+				...state,
+				profiles : state.profiles.map(p => {
+					if (p.name === action.data.name) {
+						p.files = action.data.files;
+						p.dirSave = action.data.dirSave;
+						p.isUploadToOwnCloud = action.data.isUploadToOwnCloud;
+					}
+
+					return p;
+				})
+			};
+		case `${PREFIX}_PROFILE_CHANGE_ACTIVE`:
+			return {
+				...state,
+				profiles : state.profiles.map(p => {
+					if (p.name === action.data.name) {
+						p.isActive = action.data.isActive
+					}
+
+					return p;
+				})
+			};
+		case `${PREFIX}_PROFILE_DELETE`:
+			return {
+				...state,
+				profiles : state.profiles.filter(p => p.name !== action.data)
+			};
+		case `${PREFIX}_NEW_PROFILE`:
+			return {
+				...state,
+				profiles : state.profiles.concat([action.data])
+			};
 		case `${PREFIX}_CHANGE_SEARCH`:
 			return {
 				...state,

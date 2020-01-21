@@ -1,10 +1,12 @@
 const PREFIX_UPDATE_LOCATION = 'UPDATE_LOCATION';
-const PREFIX_ALERT            = 'ALERT';
-const PREFIX_MENU             = 'MENU';
-const PREFIX_SETTINGS         = 'SETTINGS';
-const PREFIX_NEW_PROFILE      = 'NEW_PROFILE';
+const PREFIX_ALERT           = 'ALERT';
+const PREFIX_MENU            = 'MENU';
+const PREFIX_SETTINGS        = 'SETTINGS';
+const PREFIX_NEW_PROFILE     = 'NEW_PROFILE';
+const PREFIX_NEW_ARCHIVE     = 'NEW_ARCHIVE';
 
 module.exports = {
+	PREFIX_NEW_ARCHIVE,
 	PREFIX_NEW_PROFILE,
 	PREFIX_SETTINGS,
 	PREFIX_MENU,

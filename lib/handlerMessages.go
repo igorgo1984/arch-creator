@@ -34,6 +34,14 @@ func HandlerMessages(m *astilectron.EventMessage) interface{} {
 	}
 
 	switch send.Uri {
+	case "/archive/new":
+		return archiveNew(send.Data)
+	case "/change/active/profile":
+		return profileChangeActive(send.Data)
+	case "/delete/profile":
+		return profileMove(send.Data)
+	case "/edit/profile":
+		return profileEdit(send.Data)
 	case "/new/profile":
 		return profileNew(send.Data)
 	case "/app/config/set":
