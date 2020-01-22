@@ -109,7 +109,7 @@ func (i *config) Save() (err error) {
 	return err
 }
 
-func (i *config) IsHasFile ()(isHas bool) {
+func (i *config) IsHasFile() (isHas bool) {
 	return u.FileExists(Env.PathAppConfig)
 }
 

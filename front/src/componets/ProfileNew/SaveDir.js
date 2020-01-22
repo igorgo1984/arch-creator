@@ -30,7 +30,7 @@ const SaveDir = (state) => {
 		try {
 			const paths = await showOpenDialog({
 				title: "Select dir default archive for save",
-				properties: ['openDirectory'],
+				properties: ['openDirectory', 'showHiddenFiles'],
 				defaultPath: dirSave,
 			});
 

@@ -78,7 +78,7 @@ const SaveFiles = (state) => {
 		try {
 			const paths = await showOpenDialog({
 				title: "Add dirs to archive",
-				properties: ['openDirectory', 'multiSelections']
+				properties: ['openDirectory', 'multiSelections', 'showHiddenFiles']
 			});
 
 			if (!paths.length) return false;

@@ -32,6 +32,8 @@ func archiveNew(data interface{}) (response interface{}) {
 	report := make(map[string]string)
 	report["RunCreateArchive"] = "ok"
 
+	u.Logf("Create archive for %v", name)
+
 	name, addReport, err := ArchPackFiles(&profile.Files, &name, &profile.DirSave)
 
 	pd.CheckAndPanicBadReq(err != nil, "Error adding to zip file %v", err)
@@ -155,6 +157,8 @@ func ArchPackFiles(paths *[]string, zipFileBase, zipPath *string) (name string, 
 
 	pd.CheckAndPanic(err != nil, "error create zip file: %v", err)
 
+	u.Logf("Create zip file %v", name)
+
 	zipWriter = zip.NewWriter(zipFile)
 	isInitFile = true
 
@@ -165,6 +169,7 @@ func ArchPackFiles(paths *[]string, zipFileBase, zipPath *string) (name string, 
 
 		if !u.FileExists(p) {
 			report["AddPath"+inxStr] = fmt.Sprintf("file not exist %v", p)
+			u.Logf("!!! WARN path not exists %v", p)
 			continue
 		}
 
@@ -196,9 +201,12 @@ func addPathToArch(zipWriter *zip.Writer, pathBase string, pd *u.PanicData) {
 			} else {
 				addFileToArch(zipWriter, currentPath, pd)
 			}
+
+			u.Logf("-- Add path %v", p.Name())
 		}
 	} else {
 		addFileToArch(zipWriter, pathBase, pd)
+		u.Logf("-- Add path %v", pathBase)
 	}
 }
 

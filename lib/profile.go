@@ -4,6 +4,7 @@ import (
 	"errors"
 	u "github.com/eagle7410/go_util/libs"
 	"net/http"
+	"time"
 )
 
 type Profile struct {
@@ -36,6 +37,31 @@ func (i *Profile) GetErrorValidation() error {
 	}
 
 	return nil
+}
+
+func ProfilesApplyAll() {
+	runAt := time.Now()
+
+	data := map[string]interface{}{}
+
+	for _, profile := range Config.Profiles {
+
+		if !profile.IsActive {
+			continue
+		}
+
+		data["profileName"] = profile.Name
+
+		result := archiveNew(data)
+		back := result.(SendBack)
+
+		if back.Code != http.StatusOK {
+			u.LogEF("Error execute profile %+v: back %+v", profile, back)
+			return
+		}
+	}
+
+	u.Logf("FINISH. EXECUTE TIME: %v", time.Since(runAt) )
 }
 
 func profileChangeActive(data interface{}) (response interface{}) {

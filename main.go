@@ -52,6 +52,8 @@ func main() {
 	// Create linux desktop link
 	case "ls":
 		createLinuxDesktop()
+	case "profiles:apply":
+		lib.ProfilesApplyAll()
 	default:
 		runApp()
 	}
