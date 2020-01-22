@@ -1,8 +1,8 @@
-import React,{Component} from 'react';
+import React,{Component}  from 'react';
 import {  Route, Switch } from "react-router-dom";
-import { withRouter } from "react-router";
-import { withStyles } from '@material-ui/core/styles';
-import {connect} from "react-redux";
+import { withRouter }     from "react-router";
+import { withStyles }     from '@material-ui/core/styles';
+import {connect}          from "react-redux";
 
 import './App.css';
 import {
@@ -13,6 +13,7 @@ import {
 import {
     PATH_INDEX, PATH_PROFILE, PATH_PROFILE_NEW, PATH_PROFILE_EDIT,
     PATH_SETTINGS, PATH_ARCH_NEW,
+    PATH_OWN_CLOUD,
 } from "./const/path";
 
 import {classes}      from './const/styles'
@@ -29,6 +30,7 @@ import {
     ProfileNew,
     ProfileEdit,
     ArchiveCreate,
+    OwnCloud,
 } from './pages'
 
 class App extends Component {
@@ -92,6 +94,7 @@ class App extends Component {
                     <Route path={PATH_PROFILE_NEW}  component={ProfileNew}/>
                     <Route path={PATH_PROFILE_EDIT} component={ProfileEdit}/>
                     <Route path={PATH_ARCH_NEW}     component={ArchiveCreate}/>
+                    <Route path={PATH_OWN_CLOUD}    component={OwnCloud}/>
                     <Route path="*"                 component={Settings} />
                 </Switch>
                 <Alert/>

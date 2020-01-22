@@ -3,8 +3,10 @@ import Profiles      from './Profiles'
 import ProfileNew    from './ProfileNew'
 import ProfileEdit   from './ProfileEdit'
 import ArchiveCreate from './ArchiveCreate'
+import OwnCloud      from './OwnCloud'
 
 export {
+	OwnCloud,
 	ArchiveCreate,
 	ProfileEdit,
 	ProfileNew,

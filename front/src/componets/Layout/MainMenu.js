@@ -14,10 +14,12 @@ import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 
 import IconSettings  from '@material-ui/icons/Settings';
 import IconDumps  from '@material-ui/icons/AllInbox';
+import IconCloud  from '@material-ui/icons/Cloud';
 
 import {
 	PATH_INDEX,
 	PATH_PROFILE,
+	PATH_OWN_CLOUD,
 } from '../../const/path';
 
 import MenuMainItem from './MenuMainItem'
@@ -47,6 +49,9 @@ const MenuMain = (state) => {
 				</MenuMainItem>
 				<MenuMainItem label={'Archive profile'} path={PATH_PROFILE}>
 					<IconDumps />
+				</MenuMainItem>
+				<MenuMainItem label={'Own cloud store'} path={PATH_OWN_CLOUD}>
+					<IconCloud />
 				</MenuMainItem>
 			</List>
 		</Drawer>

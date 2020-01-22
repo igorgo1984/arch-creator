@@ -103,18 +103,17 @@ func (i *OwnCloud) Init(conf ConfigInterface) error {
 }
 
 func (i *OwnCloud) RemoveFileByLink(link *string) error {
-	req, _ := http.NewRequest("DELETE", *i.uri+*link, nil)
-
+	req, _ := http.NewRequest("DELETE", *i.uri + *link, nil)
 	req.SetBasicAuth(*i.user, *i.pass)
-	client := &http.Client{}
 
+	client := &http.Client{}
 	resp, err := client.Do(req)
 
 	if err != nil {
 		return err
 	}
 
-	defer resp.Body.Close()
+	defer func () { _ = resp.Body.Close() }()
 
 	if resp.StatusCode != http.StatusNoContent {
 		respMess := getMessageFromBadRequest(resp)
@@ -124,14 +123,17 @@ func (i *OwnCloud) RemoveFileByLink(link *string) error {
 	return nil
 }
 
-func (i *OwnCloud) DumpsFileList() (OwnFiles, error) {
+func (i *OwnCloud) FileList() (files OwnFiles, err error) {
 	req, err := http.NewRequest("PROPFIND", *i.uri+"/remote.php/webdav", nil)
+
+	if err != nil {
+		return files, err
+	}
 
 	req.SetBasicAuth(*i.user, *i.pass)
 	client := &http.Client{}
 
 	resp, err := client.Do(req)
-	files := OwnFiles{}
 
 	if err != nil {
 		return files, err
@@ -143,7 +145,7 @@ func (i *OwnCloud) DumpsFileList() (OwnFiles, error) {
 		return files, newError("[DumpsFileList] Bad body in response")
 	}
 
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	if resp.StatusCode != 207 {
 		respMess := getMessageFromBadRequest(resp)
