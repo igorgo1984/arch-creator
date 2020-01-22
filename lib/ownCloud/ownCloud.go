@@ -122,6 +122,34 @@ func (i *OwnCloud) RemoveFileByLink(link *string) error {
 
 	return nil
 }
+func (i *OwnCloud) MkDir (dirPath *string) (err error) {
+	//TODO: clear
+	//https://owncloud.hitech18.online/remote.php/webdav/test123 Status 201 is Normal
+
+	req, err := http.NewRequest("MKCOL", *i.uri+"/remote.php/webdav" + *dirPath, nil)
+
+	if err != nil {
+		return err
+	}
+
+	req.SetBasicAuth(*i.user, *i.pass)
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+
+	if err != nil {
+		return err
+	}
+
+	defer func() { _ = resp.Body.Close() }()
+
+	if resp.StatusCode != http.StatusCreated {
+		respMess := getMessageFromBadRequest(resp)
+		return newError("[MkDir] Bad status code " + strconv.Itoa(resp.StatusCode) + " Cloud message is :" + respMess)
+	}
+
+	return nil
+}
 
 func (i *OwnCloud) FileList() (files OwnFiles, err error) {
 	req, err := http.NewRequest("PROPFIND", *i.uri+"/remote.php/webdav", nil)
