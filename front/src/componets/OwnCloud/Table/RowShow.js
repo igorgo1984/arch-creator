@@ -20,12 +20,11 @@ import IconDownLoad from '@material-ui/icons/GetApp';
 import {ICON_TYPES, TYPES} from "../../../const/alert";
 import LoadAnimation       from '../../LoadAnimation';
 import {send}              from "../../../tools/reqAstra";
+import {showSaveDialog}    from "../../../tools/messageBox";
+
 
 const RowShow = (state) => {
-	const {
-		row, store,
-		changeField,
-	} = state;
+	const { row, store, changeField, showOk, } = state;
 	const { isLoad } = store;
 
 	const handleDelete = async () => {
@@ -39,6 +38,24 @@ const RowShow = (state) => {
 		try {
 			await send('/own-cloud/file/move', { link : row.Link });
 			state.delete(row.Link);
+		} catch (e) {
+			state.showError(e.message || e);
+		} finally {
+			changeField('isLoad', false);
+		}
+	};
+
+	const handleDownload = async () => {
+		try {
+			changeField('isLoad', true);
+
+			const pathSave = await showSaveDialog({
+				title: 'System  archive creator',
+				defaultPath:  `*/${row.name}`
+			});
+
+			await send('/own-cloud/file/download', {link: row.Link, pathSave});
+			showOk(`Download file ${row.name} is success`)
 		} catch (e) {
 			state.showError(e.message || e);
 		} finally {
@@ -66,7 +83,7 @@ const RowShow = (state) => {
 							),
 							(
 								<Tooltip title="Download"  key={row.Link + '_tl_download'} color={'primary'}>
-									<IconButton aria-label="Download" onClick={handleDelete}  key={row.Link + '_download'}>
+									<IconButton aria-label="Download" onClick={handleDownload}  key={row.Link + '_download'}>
 										<IconDownLoad key={row.Link + '_ico_download'}/>
 									</IconButton>
 								</Tooltip>
@@ -97,6 +114,14 @@ export default connect(
 	dispatch => ({
 		delete       : (data) => dispatch({type : `${PREFIX}_FILE_DELETE`, data}),
 		changeField  : (field, value) => dispatch({type : `${PREFIX}_CHANGE_FIELD`, data : {field, value} }),
+		showOk    : message => dispatch({
+			type : `${ALERT}_OPEN`,
+			data : {
+				message,
+				showIcon : ICON_TYPES.OK,
+				type : TYPES.OK
+			}
+		}),
 		showError    : message => dispatch({
 			type : `${ALERT}_OPEN`,
 			data : {

@@ -102,6 +102,31 @@ func (i *OwnCloud) Init(conf ConfigInterface) error {
 	return nil
 }
 
+func (i *OwnCloud) GetFileByLink(link *string) (arrByte []byte, err error) {
+	req, _ := http.NewRequest("GET", *i.uri + *link, nil)
+	req.SetBasicAuth(*i.user, *i.pass)
+
+	client    := &http.Client{}
+	resp, err := client.Do(req)
+
+	if err != nil {
+		return arrByte, err
+	}
+
+	defer func () { _ = resp.Body.Close() }()
+
+	if resp.StatusCode != http.StatusOK {
+		return arrByte, newError("[GetFileByLink] Bad status code " + strconv.Itoa(resp.StatusCode))
+	}
+
+	body := &bytes.Buffer{}
+
+	_, _ = io.Copy(body, resp.Body)
+
+
+	return body.Bytes(), nil
+}
+
 func (i *OwnCloud) RemoveFileByLink(link *string) error {
 	req, _ := http.NewRequest("DELETE", *i.uri + *link, nil)
 	req.SetBasicAuth(*i.user, *i.pass)
@@ -122,6 +147,7 @@ func (i *OwnCloud) RemoveFileByLink(link *string) error {
 
 	return nil
 }
+
 func (i *OwnCloud) MkDir (dirPath *string) (err error) {
 	//TODO: clear
 	//https://owncloud.hitech18.online/remote.php/webdav/test123 Status 201 is Normal
@@ -196,9 +222,13 @@ func (i *OwnCloud) File2Cloud(pathFile *string, pathWeb string) error {
 	}
 
 	body := &bytes.Buffer{}
-	io.Copy(body, file)
+	_, _ = io.Copy(body, file)
 
-	req, err := http.NewRequest("PUT", *i.uri+"/remote.php/webdav"+pathWeb, body)
+	req, err := http.NewRequest("PUT", *i.uri+"/remote.php/webdav" + pathWeb, body)
+
+	if err != nil {
+		return err
+	}
 
 	req.SetBasicAuth(*i.user, *i.pass)
 

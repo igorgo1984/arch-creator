@@ -34,6 +34,8 @@ func HandlerMessages(m *astilectron.EventMessage) interface{} {
 	}
 
 	switch send.Uri {
+	case "/own-cloud/file/download":
+		return ownCloudFileDownload(send.Data)
 	case "/own-cloud/file/move":
 		return ownCloudFileMove(send.Data)
 	case "/own-cloud/root/list":
