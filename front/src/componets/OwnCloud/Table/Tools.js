@@ -37,38 +37,25 @@ const toolbarStyles = theme => ({
 const TypographyVariant = 'h5';
 
 const EnhancedTableToolbar = state => {
-	const { classes, setSaveDirToNewProfile } = state;
+	const { classes } = state;
 
 	const {
 		selected,
 		List: data,
-		defaultSaveArchDir,
 		search
 	} = state.store;
 
 	const numData     = data.length;
 	const numSelected = selected.length;
 
-	const handlerAdd = () => {
-		alert("Need implement");
-		// TODO: clear
-		console.log('handler Add dir');
-	};
-
 	return (
 		<Toolbar
 			className={classNames(classes.root, {[classes.highlight]: numSelected > 0,})}
 		>
 			<div className={classes.title}>
-				{numSelected > 0 ? (
-					<Typography variant={TypographyVariant} color="inherit" >
-						{numSelected} selected
-					</Typography>
-				) : (
-					<Typography variant={TypographyVariant} id="tableTitle">
-						List
-					</Typography>
-				)}
+				{(<Typography variant={TypographyVariant} id="tableTitle">
+					List
+				</Typography>)}
 			</div>
 			<div className={classes.spacer} />
 			<div className={classes.actions}>
@@ -77,12 +64,6 @@ const EnhancedTableToolbar = state => {
 						? <TextField label={'Search'} value={search} onChange={state.changeSearch} />
 						: null
 				}
-
-				<Tooltip title="Add to list">
-					<IconButton aria-label="Add to list" onClick={handlerAdd}>
-						<AddBoxIcon />
-					</IconButton>
-				</Tooltip>
 			</div>
 		</Toolbar>
 	);

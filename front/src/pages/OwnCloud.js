@@ -20,13 +20,13 @@ import {
 class OwnCloud extends Component {
 
 	async componentWillMount() {
-		const {alert, changeField} = this.props;
+		const {alert, setList, changeField} = this.props;
 
 		try {
 			changeField('isLoad', true);
 
-			const response = await send('/own-cloud/root/list');
-			changeField('List', response.data.List || []);
+			const response = await send('/own-cloud/dir/list');
+			setList(response.data.List);
 
 		} catch (e) {
 			alert(alertBadEvent(e.message || e))
@@ -37,7 +37,7 @@ class OwnCloud extends Component {
 
 	render () {
 		const {
-			store, settings, classes
+			store, settings, classes,
 		} = this.props;
 
 		const { OwnCloudUri } = settings;
@@ -78,6 +78,7 @@ export default connect(
 	}),
 	dispatch => ({
 		alert : (data) => dispatch(data),
+		setList : (data) => dispatch({type : `${PREFIX}_SET_LIST`, data}),
 		changeField : (field, value) => dispatch({type : `${PREFIX}_CHANGE_FIELD`, data : {field, value} }),
 	})
 )(withStyles({

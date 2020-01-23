@@ -24,8 +24,6 @@ const EnhancedTable = state => {
 	const handleChangeRowsPerPage = (event) => state.setRowsOnPage(event.target.value);
 	const handleChangePage = (event, page) => state.setPage(page);
 
-	const RootDirName = Symbol("RootDir");
-
 	return (
 		<Paper className={classes.root}>
 			<Tools numSelected={selected.length} />
@@ -34,24 +32,9 @@ const EnhancedTable = state => {
 					<Head />
 					<TableBody>
 						{
-							data.map(row => {
-								const pathClear = row.Link.replace('/remote.php/webdav', '');
-
-								row.isDir = pathClear.substr(-1, 1) === '/';
-
-								row.name = row.isDir
-									? basename(pathClear.substr(0, pathClear.length - 1 ))
-									: basename(pathClear);
-
-								if (row.isDir && row.name === '') row.name = RootDirName;
-
-								return row;
-							})
+							stableSort(data, getSorting(order, orderBy))
 							.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-							.filter(row => {
-								if (row.name === RootDirName) return false;
-								return ( row.Link ).includes(search)
-							})
+							.filter(row => ( row.Link ).includes(search))
 							.map(n => <RowShow row={n} key={'RowS_' + n.Link} />)
 						}
 						{emptyRows > 0 && (

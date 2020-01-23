@@ -177,8 +177,8 @@ func (i *OwnCloud) MkDir (dirPath *string) (err error) {
 	return nil
 }
 
-func (i *OwnCloud) FileList() (files OwnFiles, err error) {
-	req, err := http.NewRequest("PROPFIND", *i.uri+"/remote.php/webdav", nil)
+func (i *OwnCloud) FileList(link *string) (files OwnFiles, err error) {
+	req, err := http.NewRequest("PROPFIND", *i.uri+ *link, nil)
 
 	if err != nil {
 		return files, err

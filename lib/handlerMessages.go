@@ -38,7 +38,7 @@ func HandlerMessages(m *astilectron.EventMessage) interface{} {
 		return ownCloudFileDownload(send.Data)
 	case "/own-cloud/file/move":
 		return ownCloudFileMove(send.Data)
-	case "/own-cloud/root/list":
+	case "/own-cloud/dir/list":
 		return ownCloudRootFileList(send.Data)
 	case "/archive/new":
 		return archiveNew(send.Data)

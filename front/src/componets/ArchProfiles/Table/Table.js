@@ -1,13 +1,18 @@
 import React     from 'react';
 import {connect} from 'react-redux'
 
-import { withStyles }  from '@material-ui/core/styles';
-import Table           from '@material-ui/core/Table';
-import TableBody       from '@material-ui/core/TableBody';
-import TableCell       from '@material-ui/core/TableCell';
-import TablePagination from '@material-ui/core/TablePagination';
-import TableRow        from '@material-ui/core/TableRow';
-import Paper           from '@material-ui/core/Paper';
+import {
+	withStyles,
+}  from '@material-ui/core/styles';
+
+import {
+	Table,
+	TableBody,
+	TableCell,
+	TablePagination,
+	TableRow,
+	Paper,
+}  from '@material-ui/core';
 
 import Head    from './Head'
 import Tools   from './Tools'

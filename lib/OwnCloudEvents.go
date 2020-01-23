@@ -61,7 +61,7 @@ func ownCloudFileMove(data interface{}) (response interface{}) {
 	return back;
 }
 
-func ownCloudRootFileList(_ interface{}) (response interface{}) {
+func ownCloudRootFileList(data interface{}) (response interface{}) {
 	defer func() {
 		if d := recover(); d != nil {
 			response = handlerPanic(d)
@@ -69,8 +69,16 @@ func ownCloudRootFileList(_ interface{}) (response interface{}) {
 	}()
 
 	pd := u.PanicData{}
+	payload := data.(map[string]interface{})
 
-	files, err := ownCloud.Client.FileList()
+	linkInteface, isHas := payload["link"]
+	link := "/remote.php/webdav/"
+
+	if (isHas) {
+		link = linkInteface.(string)
+	}
+
+	files, err := ownCloud.Client.FileList(&link)
 
 	pd.CheckAndPanicBadReq(err != nil, "error get file list: %v", err)
 
